@@ -4,6 +4,7 @@ requires = [
     "setuptools_scm>=8",
     "wheel",
     "Cython==3.0.11",
+    "eigency",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -14,6 +15,7 @@ description = "Python tools for simulation of optical systems"
 authors = [{ name = "Ricardo Amézquita Orozco", email = "ramezquitao@cihologramas.com" }]
 license = { file = "LICENSE.txt" }
 readme = "README.md"
+requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.26.2",
     "scipy>=1.5.2",
@@ -22,7 +24,8 @@ dependencies = [
     "matplotlib>=3.3.1",
     "orjson>=3.10.7",
     "Pillow>=10.0.1",
-    "importlib-resources>=3.3.0"
+    "importlib-resources>=3.3.0",
+    "plotly>=5.0.0"
 ]
 
 [project.optional-dependencies]

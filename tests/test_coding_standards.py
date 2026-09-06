@@ -1,6 +1,6 @@
 import os
 import pytest
-import pycodestyle  # This is the updated name for the pep8 tool
+pycodestyle = pytest.importorskip('pycodestyle')  # This is the updated name for the pep8 tool
 from subprocess import run, PIPE
 
 import pyoptools

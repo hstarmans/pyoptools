@@ -41,8 +41,8 @@ def test_parts():
 
 
 def test_user_lib():
-    ntf = tempfile.NamedTemporaryFile("w", suffix=".json")
-    with ntf as fp:
+    import os
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fp:
         fp.write(
             """
            {
@@ -59,10 +59,13 @@ def test_user_lib():
             }
         """
         )
-        fp.flush()
-        fp.seek(0)
+        temp_name = fp.name
 
-        library.add(ntf.name)
+    try:
+        library.add(temp_name)
 
         assert library.descriptor("a_test_lens")["thickness"] == 3.5
         assert library.descriptor("a_test_lens")["description"] == "test"
+    finally:
+        if os.path.exists(temp_name):
+            os.remove(temp_name)

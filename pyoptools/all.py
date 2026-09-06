@@ -66,6 +66,7 @@ from pyoptools.gui.plotutils import *
 
 # Module implemented using pythreejs
 from pyoptools.gui.ipywidgets import *
+from pyoptools.gui.plotly_viewer import *
 
 
 warnings.filterwarnings('always', category=DeprecationWarning)

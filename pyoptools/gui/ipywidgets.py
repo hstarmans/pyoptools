@@ -11,13 +11,15 @@ from numpy import array
 try:
     import pythreejs as py3js
 except ModuleNotFoundError:
-    print("need pythreejs installed to be able to plot systems in Jupyter notebooks")
+    py3js = None
+
+from pyoptools.gui.plotly_viewer import plot_system_plotly
 
 from numpy import pi, array, dot, sin, cos
 from math import sqrt
 from matplotlib import colors
 
-__all__ = ["Plot3D"]
+__all__ = ["Plot3D", "plot_system_plotly"]
 
 
 def create_transformation_matrix(P, D):
@@ -417,7 +419,13 @@ def sys2mesh(os):
 
 
 def Plot3D(
-    S, size=(800, 200), center=(0, 0, 0), rot=[(pi / 3.0, pi / 6.0, 0)], scale=1
+    S,
+    size=(800, 500),
+    center=(0, 0, 0),
+    rot=[(pi / 3.0, pi / 6.0, 0)],
+    scale=1,
+    backend="auto",
+    **kwargs,
 ):
     """
     Creates a 3D interactive visualization of an optical system, component,
@@ -467,6 +475,24 @@ def Plot3D(
         and a scale factor of 1.
     """
     width, height = size
+
+    # Modern Plotly 3D backend (works across Marimo, JupyterLab 4, VS Code, and browser)
+    if backend in ("auto", "plotly"):
+        try:
+            return plot_system_plotly(
+                S,
+                width=int(width * scale),
+                height=int(height * scale),
+                **kwargs,
+            )
+        except Exception:
+            if backend == "plotly":
+                raise
+
+    if py3js is None:
+        raise ImportError(
+            "pythreejs is not installed. To use the 3D viewer, install plotly or pythreejs."
+        )
 
     light = py3js.DirectionalLight(
         color="#ffffff", intensity=0.7, position=[0, 1000, 0]

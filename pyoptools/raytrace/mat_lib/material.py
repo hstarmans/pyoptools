@@ -76,7 +76,7 @@ class MaterialLibrary:
         else:
             self.glass_path = self.dp / "glass" / prefix
 
-        with (self.dp / "aliases.json").open() as af:
+        with (self.dp / "aliases.json").open(encoding="utf-8") as af:
             self.aliases = json.load(af)
 
         self._compound_lib_names = ["organic", "inorganic"]
