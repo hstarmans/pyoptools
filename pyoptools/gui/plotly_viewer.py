@@ -276,7 +276,6 @@ def plot_system_plotly(
         else:
             surf_items = list(enumerate(surflist))
 
-        has_separate_sides = False
         for surf_key, surf_item in surf_items:
             if isinstance(surf_item, (list, tuple)) and len(surf_item) == 3:
                 surf_obj, surf_pos, surf_rot = surf_item
@@ -286,9 +285,6 @@ def plot_system_plotly(
                     (0.0, 0.0, 0.0),
                     (0.0, 0.0, 0.0),
                 )
-
-            if surf_key in ("S3", "S4", "S5", "S6", "B1", "B2"):
-                has_separate_sides = True
 
             if not hasattr(surf_obj, "polylist"):
                 continue
@@ -309,13 +305,9 @@ def plot_system_plotly(
             facet_color = (
                 "#F59E0B" if getattr(surf_obj, "reflectivity", 0) == 1 else color
             )
-
-            # Use frosted appearance for lateral closing surfaces
             surf_opacity = opacity
-            if surf_key in ("S3", "S4", "S5", "S6", "B1", "B2"):
-                facet_color = "#94A3B8"
-                surf_opacity = 0.55
 
+            is_planar = "Plane" in type(surf_obj).__name__
             mesh = go.Mesh3d(
                 x=world_pts[:, 0],
                 y=world_pts[:, 1],
@@ -326,7 +318,7 @@ def plot_system_plotly(
                 name=f"{comp_name} ({surf_key})",
                 color=facet_color,
                 opacity=surf_opacity,
-                flatshading=flatshading if surf_key in ("S1", "S2") else True,
+                flatshading=True if is_planar else flatshading,
                 lighting={
                     "ambient": 0.7,
                     "diffuse": 0.9,
@@ -339,32 +331,6 @@ def plot_system_plotly(
                 showlegend=False,
             )
             traces.append(mesh)
-
-        # If component is CylindricalLens and doesn't have S3..S6 in its surflist, stitch perimeter
-        if "Cylindrical" in comp_name and not has_separate_sides:
-            side_pts, side_polys = _generate_lens_side_mesh(component, T_comp)
-            if side_pts is not None and side_polys is not None:
-                side_mesh = go.Mesh3d(
-                    x=side_pts[:, 0],
-                    y=side_pts[:, 1],
-                    z=side_pts[:, 2],
-                    i=side_polys[:, 0],
-                    j=side_polys[:, 1],
-                    k=side_polys[:, 2],
-                    name=f"{comp_name} (Sides)",
-                    color="#94A3B8",
-                    opacity=0.55,
-                    flatshading=True,
-                    lighting={
-                        "ambient": 0.75,
-                        "diffuse": 0.85,
-                        "roughness": 0.3,
-                        "specular": 0.4,
-                    },
-                    hoverinfo="name",
-                    showlegend=False,
-                )
-                traces.append(side_mesh)
 
     # 2. Render Propagated Rays grouped by wavelength
     ray_groups: dict[float, list[tuple[np.ndarray, np.ndarray]]] = {}
