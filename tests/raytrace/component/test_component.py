@@ -51,3 +51,46 @@ def test_cylindrical_lens():
     # Check non-physical curvature error
     with pytest.raises(ValueError):
         CylindricalLens(size=(50, 20), thickness=10, curvature_s1=1.0/20.0)
+
+
+def test_pentaprism():
+    from pyoptools.raytrace.comp_lib import PentaPrism
+    from pyoptools.raytrace.system import System
+    from pyoptools.raytrace.ray import Ray
+    import numpy as np
+
+    penta = PentaPrism(s=20, material=1.5)
+    assert len(penta.surflist) == 7, f"Expected 7 surfaces (S1..S7), got {len(penta.surflist)}"
+    for key in ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]:
+        assert key in penta.surflist, f"Missing surface {key}"
+
+    # Ray entering entrance face S1 and exiting 90 degrees turned through S2
+    sys_p = System(complist=[(penta, (0, 0, 0), (0, 0, 0))])
+    r_in = Ray(origin=(0, 0, -20), direction=(0, 0, 1), wavelength=0.589)
+    sys_p.ray_add(r_in)
+    sys_p.propagate()
+    final_rays = r_in.get_final_rays()
+    assert len(final_rays) == 1
+    # Should exit pointing along +X
+    np.testing.assert_allclose(final_rays[0].direction, [1.0, 0.0, 0.0], atol=1e-5)
+
+    # Ray hitting top closing surface S6 (y = 10)
+    r_top = Ray(origin=(0, 20, 0), direction=(0, -1, 0))
+    res_top = penta.propagate(r_top, 1.0)
+    assert len(res_top) > 0
+
+
+def test_doveprism():
+    from pyoptools.raytrace.comp_lib import DovePrism
+    from pyoptools.raytrace.ray import Ray
+    import numpy as np
+
+    dove = DovePrism(s=15, length=60, material=1.5)
+    assert len(dove.surflist) == 6, f"Expected 6 surfaces (S1..S6), got {len(dove.surflist)}"
+    for key in ["S1", "S2", "S3", "S4", "S5", "S6"]:
+        assert key in dove.surflist, f"Missing surface {key}"
+
+    # Ray hitting top surface S5 (y = 7.5)
+    r_top = Ray(origin=(0, 20, 0), direction=(0, -1, 0))
+    res_top = dove.propagate(r_top, 1.0)
+    assert len(res_top) > 0
