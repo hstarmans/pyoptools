@@ -48,6 +48,7 @@ from scipy.optimize import fsolve
 from numpy.random import normal
 import multiprocessing as mp
 
+
 def intersection(ray1, ray2, atol=1e-8):
     """
     Return the point of intersection between the rays ray1 and ray2.

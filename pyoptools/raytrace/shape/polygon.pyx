@@ -12,7 +12,6 @@
 # Symbols Defined: Polygon
 # ------------------------------------------------------------------------------
 
-from libcpp.vector cimport vector
 from pyoptools.raytrace.shape.shape cimport Shape
 from pyoptools.misc.cmisc.eigen cimport Vector3d, Vector2d
 
@@ -72,7 +71,9 @@ cdef class Polygon(Shape):
             xj = self.poly_points[j](0)
             yj = self.poly_points[j](1)
 
-            if ((yi > py) != (yj > py)) and (px < (xj - xi) * (py - yi) / (yj - yi) + xi):
+            if ((yi > py) != (yj > py)) and (
+                px < (xj - xi) * (py - yi) / (yj - yi) + xi
+            ):
                 inside = not inside
             j = i
 
@@ -94,10 +95,14 @@ cdef class Polygon(Shape):
         for i in range(1, n):
             x = self.poly_points[i](0)
             y = self.poly_points[i](1)
-            if x < xmin: xmin = x
-            if x > xmax: xmax = x
-            if y < ymin: ymin = y
-            if y > ymax: ymax = y
+            if x < xmin:
+                xmin = x
+            if x > xmax:
+                xmax = x
+            if y < ymin:
+                ymin = y
+            if y > ymax:
+                ymax = y
 
         return xmin, xmax, ymin, ymax
 
