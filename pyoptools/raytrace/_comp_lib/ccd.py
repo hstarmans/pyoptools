@@ -15,16 +15,15 @@
 """
 Definition of a CCD like object and helper functions
 """
-from PIL.Image import fromarray
-from scipy.interpolate import interp2d, bisplrep, bisplev
-from numpy import arange, ma, meshgrid, linspace
 
-from pyoptools.raytrace.component import Component
-from pyoptools.raytrace.surface import ArrayDetector, Plane
-from pyoptools.misc.pmisc import wavelength2RGB
+from numpy import linspace, ma, meshgrid
+from PIL.Image import fromarray
+from scipy.interpolate import bisplev, bisplrep
+
 from pyoptools.misc.lsq import polyfit2d
-from pyoptools.raytrace.shape import Shape
-from pyoptools.raytrace.shape import Rectangular
+from pyoptools.raytrace.component import Component
+from pyoptools.raytrace.shape import Rectangular, Shape
+from pyoptools.raytrace.surface import Plane
 
 # from gui.plotutils import plot, figure, cm,  legend
 

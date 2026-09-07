@@ -17,11 +17,12 @@ Definition of a cylindrical lens object and helper functions
 """
 
 from math import pi
+
 import numpy as np
 
 from pyoptools.raytrace.component import Component
-from pyoptools.raytrace.surface import Cylindrical, Plane
 from pyoptools.raytrace.shape import Rectangular
+from pyoptools.raytrace.surface import Cylindrical, Plane
 
 
 class CylindricalLens(Component):
@@ -48,7 +49,7 @@ class CylindricalLens(Component):
         curvature_s1=1.0 / 200,
         curvature_s2=1.0 / 200,
         *args,
-        **kwargs
+        **kwargs,
     ):
         Component.__init__(self, *args, **kwargs)
         self.size = size

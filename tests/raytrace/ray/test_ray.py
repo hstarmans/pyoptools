@@ -1,7 +1,8 @@
-import pytest
+from math import nan
+
 import numpy as np
 import pyoptools.raytrace.ray.ray as ray
-from math import nan
+
 
 def test_ray_equal():
     "Rays with exactly same attributes are equals."

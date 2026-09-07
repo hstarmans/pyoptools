@@ -16,11 +16,8 @@
 Definition of stop components
 """
 
-from numpy import sqrt, pi, absolute
-
 from pyoptools.raytrace.component import Component
 from pyoptools.raytrace.surface import OpticalStop
-from pyoptools.raytrace.shape import Shape
 
 
 class Stop(Component):

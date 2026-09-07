@@ -5,7 +5,9 @@ JupyterLab 4, VS Code Interactive Window, and standalone HTML exports.
 """
 
 from __future__ import annotations
+
 from typing import Any
+
 import numpy as np
 
 __all__ = ["plot_system_plotly"]
@@ -107,7 +109,9 @@ def _wavelength_to_color(wl: float) -> str:
     return "#2563EB"
 
 
-def _generate_lens_side_mesh(component, T_comp: np.ndarray) -> tuple[np.ndarray, np.ndarray] | tuple[None, None]:
+def _generate_lens_side_mesh(
+    component, T_comp: np.ndarray
+) -> tuple[np.ndarray, np.ndarray] | tuple[None, None]:
     """Generate watertight side walls connecting S1 and S2 perimeter points."""
     surflist = getattr(component, "surflist", {})
     if isinstance(surflist, (list, tuple)):
@@ -230,6 +234,7 @@ def plot_system_plotly(
         class _DummyComp:
             def __init__(self, s):
                 self.surflist = {"S": (s, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))}
+
         complist = [(_DummyComp(obj), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))]
     elif isinstance(obj, (list, tuple)) and len(obj) > 0 and hasattr(obj[0], "origin"):
         # List of rays
@@ -249,7 +254,11 @@ def plot_system_plotly(
             color = "#38BDF8"  # Refractive optical glass
             opacity = 0.40
             flatshading = True
-        elif "Cylindrical" in comp_name or "Lens" in comp_name or "Spherical" in comp_name:
+        elif (
+            "Cylindrical" in comp_name
+            or "Lens" in comp_name
+            or "Spherical" in comp_name
+        ):
             color = "#BAE6FD"  # High-transparency optical glass
             opacity = 0.45
             flatshading = False

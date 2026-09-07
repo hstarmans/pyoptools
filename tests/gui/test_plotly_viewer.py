@@ -1,11 +1,15 @@
 import pytest
-from pyoptools.raytrace.system import System
-from pyoptools.raytrace.comp_lib import CylindricalLens, SphericalLens, Block, RightAnglePrism
-from pyoptools.raytrace.surface import Plane
-from pyoptools.raytrace.shape import Rectangular
-from pyoptools.raytrace.ray import Ray
-from pyoptools.gui.plotly_viewer import plot_system_plotly, _wavelength_to_color
+
 from pyoptools.gui.ipywidgets import Plot3D
+from pyoptools.gui.plotly_viewer import _wavelength_to_color, plot_system_plotly
+from pyoptools.raytrace.comp_lib import (
+    Block,
+    CylindricalLens,
+)
+from pyoptools.raytrace.ray import Ray
+from pyoptools.raytrace.shape import Rectangular
+from pyoptools.raytrace.surface import Plane
+from pyoptools.raytrace.system import System
 
 plotly = pytest.importorskip("plotly")
 import plotly.graph_objects as go
@@ -22,7 +26,13 @@ def test_wavelength_to_color():
 
 
 def test_plot_system_plotly():
-    lens = CylindricalLens(size=(20, 20), thickness=6, curvature_s1=1.0/50.0, curvature_s2=0.0, material=1.5)
+    lens = CylindricalLens(
+        size=(20, 20),
+        thickness=6,
+        curvature_s1=1.0 / 50.0,
+        curvature_s2=0.0,
+        material=1.5,
+    )
     sys = System(complist=[(lens, (0, 0, 20), (0, 0, 0))])
     ray = Ray(origin=(0, 0, 0), direction=(0, 0, 1), wavelength=0.405)
     sys.ray_add(ray)

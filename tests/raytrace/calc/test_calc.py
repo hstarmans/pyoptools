@@ -1,16 +1,17 @@
-import pytest
-import numpy as np
 from itertools import permutations
 
+import numpy as np
+import pytest
+from pyoptools.raytrace.shape.circular import Circular
+from pyoptools.raytrace.system.system import System
+
+import pyoptools.raytrace.calc.calc as calc
 from pyoptools.raytrace._comp_lib.ccd import CCD
 from pyoptools.raytrace._comp_lib.spherical_lens import SphericalLens
 from pyoptools.raytrace._comp_lib.stop import Stop
-import pyoptools.raytrace.calc.calc as calc
 from pyoptools.raytrace.library import library
 from pyoptools.raytrace.mat_lib import material
 from pyoptools.raytrace.ray import Ray, parallel_beam_c
-from pyoptools.raytrace.shape.circular import Circular
-from pyoptools.raytrace.system.system import System
 
 
 def test_intersection():
@@ -105,7 +106,9 @@ def test_chief_ray_search():
 
     np.testing.assert_almost_equal(chief_ray.origin, [0, 10, 0])
     np.testing.assert_almost_equal(
-        chief_ray.direction, [3.58848263e-04, -9.26093228e-02, 9.95702458e-01], decimal=3
+        chief_ray.direction,
+        [3.58848263e-04, -9.26093228e-02, 9.95702458e-01],
+        decimal=3,
     )
     np.testing.assert_almost_equal(chief_ray.intensity, 1)
     np.testing.assert_almost_equal(chief_ray.wavelength, 0.58929)
@@ -118,6 +121,7 @@ def test_chief_ray_search():
 @pytest.mark.skip(reason="Please write a proper test for pupil_location")
 def test_pupil_location():
     assert False
+
 
 @pytest.mark.skip(reason="This is failing")
 def test_paraxial_location():

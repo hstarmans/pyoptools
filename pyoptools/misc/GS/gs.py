@@ -1,20 +1,20 @@
 from mako.template import Template
-from pyoptools.misc.resources import has_double_support, has_amd_double_support
+
+from pyoptools.misc.resources import has_amd_double_support, has_double_support
 
 # ojo, toca solucionar esta importacion en caso de que no exista pypencl
 
 try:
-    from pyfft.cl import Plan
     import pyopencl as cl
     import pyopencl.array as cl_array
+    from pyfft.cl import Plan
 except ImportError:
     pass
 
 
-from numpy.fft import fft2, ifft2, fftshift, ifftshift
-from numpy import angle, exp, pi, complex128, zeros, sqrt, int32, zeros_like, ones
+from numpy import angle, complex128, exp, int32, ones, pi, zeros, zeros_like
+from numpy.fft import fft2, fftshift, ifft2, ifftshift
 from numpy.random import random
-
 
 KERNEL = """
     //There are some operations that are not defined in the RV770 GPUs
@@ -183,7 +183,7 @@ def gs_mod(idata, itera=10, osize=256):
     cut = osize // 2
 
     zone = zeros_like(idata)
-    zone[M / 2 - cut:M / 2 + cut, N / 2 - cut:N / 2 + cut] = 1
+    zone[M / 2 - cut : M / 2 + cut, N / 2 - cut : N / 2 + cut] = 1
     zone = zone.astype(bool)
 
     mask = exp(2.0j * pi * random(idata.shape))
@@ -302,7 +302,7 @@ def gs_mod_gpu(idata, itera=10, osize=256):
     plan.execute(idata_gpu.data, fdata_gpu.data)
 
     mask = exp(2.0j * pi * random(idata.shape))
-    mask[512 - cut:512 + cut, 512 - cut:512 + cut] = 0
+    mask[512 - cut : 512 + cut, 512 - cut : 512 + cut] = 0
 
     idata_gpu = cl_array.to_device(queue, ifftshift(idata + mask).astype("complex128"))
     fdata_gpu = cl_array.empty_like(idata_gpu)

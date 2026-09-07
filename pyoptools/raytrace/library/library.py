@@ -1,10 +1,10 @@
-from pyoptools.raytrace._comp_lib.optic_factory import optic_factory
+import warnings
+from pathlib import Path
 
 import orjson
-import warnings
-
 from importlib_resources import files
-from pathlib import Path
+
+from pyoptools.raytrace._comp_lib.optic_factory import optic_factory
 
 
 # This class overrides the module, to provide direct attribute and item access
@@ -86,7 +86,7 @@ class LibraryModule:
         an optic given the part number.
         """
         warnings.warn(
-            "This method is deprecated, you can use dictionary-style access " "instead",
+            "This method is deprecated, you can use dictionary-style access instead",
             DeprecationWarning,
         )
         return optic_factory(**self.descriptor(part))

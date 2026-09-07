@@ -6,13 +6,12 @@ the refraction index.
 It uses the database from  https://refractiveindex.info
 """
 
-from .mat_eq import from_yml, ModelNotImplemented
-
-import sys
 import json
+import sys
 
-from pathlib import Path
 from importlib_resources import files
+
+from .mat_eq import from_yml
 
 
 # This class overrides the module definition
@@ -131,7 +130,7 @@ class MaterialLibrary:
         # find in glasses
         matches = list(self.glass_path.glob(f"**/{name}.yml"))
         if len(matches) > 1:
-            warning = f"Multiple matches for glass type {name}. " f"Use one of: "
+            warning = f"Multiple matches for glass type {name}. Use one of: "
             for m in matches:
                 warning += f"material.{m.parts[-2]}['{name}'] or "
             raise KeyError(warning[:-4])

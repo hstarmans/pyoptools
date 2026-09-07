@@ -16,11 +16,11 @@
 Definition of a spherical lens object and helper functions
 """
 
-from numpy import sqrt, pi, absolute, inf
+from numpy import absolute, inf, pi, sqrt
 
 from pyoptools.raytrace.component import Component
-from pyoptools.raytrace.surface import Spherical, Cylindrical, Plane
 from pyoptools.raytrace.shape import Circular, Rectangular
+from pyoptools.raytrace.surface import Cylindrical, Plane, Spherical
 
 
 class SphericalLens(Component):
@@ -75,7 +75,7 @@ class SphericalLens(Component):
         curvature_s1=1.0 / 200,
         curvature_s2=1.0 / 200,
         *args,
-        **kwargs
+        **kwargs,
     ):
         Component.__init__(self, *args, **kwargs)
         self.radius = radius

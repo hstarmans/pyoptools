@@ -1,14 +1,16 @@
+import tempfile
+
 import pytest
-from pyoptools.raytrace.library import library
+
 from pyoptools.raytrace._comp_lib.optic_factory import optic_factory
 from pyoptools.raytrace._comp_lib.spherical_lens import SphericalLens
-import tempfile
+from pyoptools.raytrace.library import library
 
 
 @pytest.mark.skip(reason="Skipping this test for now takes too long")
 def test_all_optics():
     for i, (part, descriptor) in enumerate(library.items()):
-        optic = optic_factory(**descriptor)
+        _optic = optic_factory(**descriptor)
 
 
 def test_direct_access():
@@ -42,6 +44,7 @@ def test_parts():
 
 def test_user_lib():
     import os
+
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fp:
         fp.write(
             """

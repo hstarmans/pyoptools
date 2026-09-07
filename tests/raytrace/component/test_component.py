@@ -3,9 +3,7 @@
 # third-party imports
 
 # local imports
-from pyoptools.raytrace import shape
-from pyoptools.raytrace import surface
-from pyoptools.raytrace import component
+from pyoptools.raytrace import component, shape, surface
 from pyoptools.raytrace.mat_lib import material
 
 
@@ -28,11 +26,18 @@ def test_component_surflist():
 
 def test_cylindrical_lens():
     import pytest
+
     from pyoptools.raytrace.comp_lib import CylindricalLens
     from pyoptools.raytrace.ray import Ray
 
     # Plano-convex cylindrical lens
-    lens = CylindricalLens(size=(20, 20), thickness=10, curvature_s1=1.0/50.0, curvature_s2=0.0, material=1.5)
+    lens = CylindricalLens(
+        size=(20, 20),
+        thickness=10,
+        curvature_s1=1.0 / 50.0,
+        curvature_s2=0.0,
+        material=1.5,
+    )
     surfs = lens.surflist
     assert len(surfs) == 6, f"Expected 6 surfaces (S1..S6), got {len(surfs)}"
     for key in ["S1", "S2", "S3", "S4", "S5", "S6"]:
@@ -50,17 +55,20 @@ def test_cylindrical_lens():
 
     # Check non-physical curvature error
     with pytest.raises(ValueError):
-        CylindricalLens(size=(50, 20), thickness=10, curvature_s1=1.0/20.0)
+        CylindricalLens(size=(50, 20), thickness=10, curvature_s1=1.0 / 20.0)
 
 
 def test_pentaprism():
-    from pyoptools.raytrace.comp_lib import PentaPrism
-    from pyoptools.raytrace.system import System
-    from pyoptools.raytrace.ray import Ray
     import numpy as np
 
+    from pyoptools.raytrace.comp_lib import PentaPrism
+    from pyoptools.raytrace.ray import Ray
+    from pyoptools.raytrace.system import System
+
     penta = PentaPrism(s=20, material=1.5)
-    assert len(penta.surflist) == 7, f"Expected 7 surfaces (S1..S7), got {len(penta.surflist)}"
+    assert len(penta.surflist) == 7, (
+        f"Expected 7 surfaces (S1..S7), got {len(penta.surflist)}"
+    )
     for key in ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]:
         assert key in penta.surflist, f"Missing surface {key}"
 
@@ -81,12 +89,14 @@ def test_pentaprism():
 
 
 def test_doveprism():
+
     from pyoptools.raytrace.comp_lib import DovePrism
     from pyoptools.raytrace.ray import Ray
-    import numpy as np
 
     dove = DovePrism(s=15, length=60, material=1.5)
-    assert len(dove.surflist) == 6, f"Expected 6 surfaces (S1..S6), got {len(dove.surflist)}"
+    assert len(dove.surflist) == 6, (
+        f"Expected 6 surfaces (S1..S6), got {len(dove.surflist)}"
+    )
     for key in ["S1", "S2", "S3", "S4", "S5", "S6"]:
         assert key in dove.surflist, f"Missing surface {key}"
 

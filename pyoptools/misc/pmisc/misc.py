@@ -1,31 +1,28 @@
-
 import numpy as N
+from matplotlib.tri import Triangulation
 from numpy import (
-    array,
-    sin,
-    cos,
-    float64,
-    dot,
-    sqrt,
-    floor,
-    meshgrid,
-    zeros,
-    where,
-    pi,
-    isnan,
-    nonzero,
-    rint,
-    linspace,
     arange,
     argwhere,
+    array,
+    cos,
+    dot,
+    float64,
+    floor,
+    isnan,
+    linspace,
     mean,
+    meshgrid,
+    nonzero,
+    pi,
+    rint,
+    sin,
+    sqrt,
+    where,
+    zeros,
 )
-from numpy.ma import is_masked, MaskedArray
+from numpy.ma import MaskedArray, is_masked
 from numpy.ma import array as ma_array
-
 from scipy import interpolate
-from matplotlib.tri import Triangulation
-
 
 """Auxiliary functions and classes
 """
@@ -203,8 +200,7 @@ def matrix_interpolation(M, i, j, type="bilinear"):
     ]
     if type not in inter_types:
         raise ValueError(
-            "Interpolation type not allowed. The allowed types"
-            " are: {0}".format(inter_types)
+            f"Interpolation type not allowed. The allowed types are: {inter_types}"
         )
     if type == "nearest":
         iri = int(round(i))
@@ -213,7 +209,7 @@ def matrix_interpolation(M, i, j, type="bilinear"):
     elif type == "bilinear":
         i_s, j_s = floor((i, j))
         # calc 1
-        m = M[i_s:i_s + 2, j_s:j_s + 2]
+        m = M[i_s : i_s + 2, j_s : j_s + 2]
         iv = array([1 - (i - i_s), i - i_s])
         jv = array(
             [
@@ -575,9 +571,9 @@ def interpolate_g(xi, yi, zi, xx, yy, knots=10, error=False, mask=None):
     assert xx.ndim == 1, "xx must ba a 1D array or list"
     assert yy.ndim == 1, "yy must ba a 1D array or list"
 
-    assert len(xi) == len(yi) and len(xi) == len(
-        zi
-    ), "xi, yi, zi must have the same number of items"
+    assert len(xi) == len(yi) and len(xi) == len(zi), (
+        "xi, yi, zi must have the same number of items"
+    )
 
     if error:
         # Create a list of indexes to be able to select the points that are going

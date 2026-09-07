@@ -1,23 +1,24 @@
-
 """Module with functions and classes to represent the pyoptools objects
 in `jupyter notebooks <http://jupyter.org>`_.
 """
 
-from pyoptools.raytrace.system import System
-from pyoptools.raytrace.component import Component
-from pyoptools.misc.pmisc import wavelength2RGB, cross, rot_x, rot_y, rot_z
 from numpy import array
+
+from pyoptools.misc.pmisc import cross, rot_x, rot_y, rot_z, wavelength2RGB
+from pyoptools.raytrace.component import Component
+from pyoptools.raytrace.system import System
 
 try:
     import pythreejs as py3js
 except ModuleNotFoundError:
     py3js = None
 
-from pyoptools.gui.plotly_viewer import plot_system_plotly
-
-from numpy import pi, array, dot, sin, cos
 from math import sqrt
+
 from matplotlib import colors
+from numpy import cos, dot, pi, sin
+
+from pyoptools.gui.plotly_viewer import plot_system_plotly
 
 __all__ = ["Plot3D", "plot_system_plotly"]
 
@@ -306,7 +307,6 @@ def ray2list(ray):
         P2 = P1 + 10.0 * array(ray.direction)
 
     if ray.intensity != 0:
-
         line = [list(P1), list(P2)]
         rays.append(line)
 
@@ -410,7 +410,6 @@ def sys2mesh(os):
             s.add(ray2mesh(i))
 
         # Draw Components
-        n = 0
         for comp in os.complist:
             C, P, D = comp
             c = comp2mesh(C, P, D)

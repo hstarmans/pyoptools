@@ -16,12 +16,13 @@
 Definition of a prism object and helper functions
 """
 
-from numpy import sqrt, pi, absolute
+from math import cos, radians, sin
+
+from numpy import pi, sqrt
 
 from pyoptools.raytrace.component import Component
+from pyoptools.raytrace.shape import Polygon, Rectangular, Triangular
 from pyoptools.raytrace.surface import Plane
-from pyoptools.raytrace.shape import Rectangular, Triangular, Polygon
-from math import cos, radians, sin
 
 
 class RightAnglePrism(Component):
@@ -55,7 +56,7 @@ class RightAnglePrism(Component):
         reflega=0,
         reflegb=0,
         *args,
-        **kwargs
+        **kwargs,
     ):
         Component.__init__(self, *args, **kwargs)
 

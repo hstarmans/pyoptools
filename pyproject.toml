@@ -75,17 +75,41 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
 
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+extend-exclude = [
+    "*.pyx",
+    "*.pxd",
+    "build",
+    "dist",
+    "doc",
+    "debian",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+]
+ignore = [
+    "E501",  # line length (matching existing repo policy)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/all.py" = ["F403", "F405"]
+"**/gs.py" = ["F403", "F405"]
+"**/__init__.py" = ["F401", "F403"]
+"**/comp_lib.py" = ["F401"]
+"tests/**" = ["E402", "F401", "F403", "F405"]
+
 [dependency-groups]
 dev = [
     "cython-lint>=0.18.0",
-    "pycodestyle>=2.14.0",
+    "ruff>=0.8.0",
     "setuptools>=80.9.0",
-    "pep8>=1.7.1",
     "pytest>=8.2.1",
     "pytest-cov>=5.0.0",
 ]
-
-
-[tool.autopep8]
-max_line_length = 88
-aggressive = 1

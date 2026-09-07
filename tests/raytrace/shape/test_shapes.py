@@ -1,4 +1,5 @@
 import pickle
+
 import pytest
 from pyoptools.raytrace.shape.circular import Circular
 from pyoptools.raytrace.shape.polygon import Polygon

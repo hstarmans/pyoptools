@@ -1,4 +1,3 @@
-
 """Method collection to obtain optical system information
 
 This module contains a method collection to obtain information, and analyze
@@ -20,33 +19,33 @@ __all__ = [
     "ray_paths",
 ]
 
-import numpy as np
+import multiprocessing as mp
 
-from pyoptools.raytrace.ray import Ray
+import numpy as np
+from numpy import (
+    array,
+    dot,
+    inf,
+    isnan,
+    mgrid,
+    nan,
+    pi,
+    sqrt,
+    square,
+    where,
+)
+from numpy.random import normal
+from scipy.optimize import fsolve
+
 from pyoptools.misc.pmisc import cross
-from pyoptools.raytrace.system import System
-from pyoptools.raytrace.component import Component
 from pyoptools.raytrace.comp_lib import CCD
-from pyoptools.raytrace.surface import Spherical
+from pyoptools.raytrace.component import Component
+from pyoptools.raytrace.ray import Ray
 
 # from gui.plot_frame import PlotFrame
 from pyoptools.raytrace.shape import Circular
-
-from numpy import (
-    inf,
-    sqrt,
-    square,
-    pi,
-    dot,
-    array,
-    isnan,
-    nan,
-    mgrid,
-    where,
-)
-from scipy.optimize import fsolve
-from numpy.random import normal
-import multiprocessing as mp
+from pyoptools.raytrace.surface import Spherical
+from pyoptools.raytrace.system import System
 
 
 def intersection(ray1, ray2, atol=1e-8):
@@ -357,7 +356,7 @@ def pupil_location(opsys, ccds, opaxis):
 
     if len(enp) != 1 or len(exp) != 1 or len(oax) != 1:
         raise Exception(
-            "The principal ray or the optical axis ray have more" " than one final ray"
+            "The principal ray or the optical axis ray have more than one final ray"
         )
 
     # Find the nearest points between the rays.
@@ -455,7 +454,7 @@ def paraxial_location(opsys, opaxis):
 
     if len(par) != 1 or len(oax) != 1:
         raise Exception(
-            "The paraxial ray or the optical axis ray have more" " than one final ray"
+            "The paraxial ray or the optical axis ray have more than one final ray"
         )
 
     expl = intersection(oax[0], par[0])
@@ -501,8 +500,8 @@ def find_aperture(ccd, size=(50, 50)):
     tx, ty = size
     dx, dy = sx / (tx - 1), sy / (ty - 1)
     CG = mgrid[
-        float(-sx / 2.0):float(sx / 2.0 + dx):float(dx),
-        float(-sy / 2.0):float(sy / 2.0 + dy):float(dy),
+        float(-sx / 2.0) : float(sx / 2.0 + dx) : float(dx),
+        float(-sy / 2.0) : float(sy / 2.0 + dy) : float(dy),
     ]
 
     rm = sqrt(CG[0] ** 2 + CG[1] ** 2)
@@ -798,8 +797,8 @@ def parallel_propagate(os, r, np=None):
     r_list = []
     r_list.append((os, r[: nr / cpus]))
     for i in range(2, cpus):
-        r_list.append((os, r[(nr / cpus) * (i - 1):(nr / cpus) * (i)]))
-    r_list.append((os, r[(nr / cpus) * (cpus - 1):]))
+        r_list.append((os, r[(nr / cpus) * (i - 1) : (nr / cpus) * (i)]))
+    r_list.append((os, r[(nr / cpus) * (cpus - 1) :]))
     osi = pool.map(aux_paral_f, r_list)
 
     pool.close()
@@ -859,8 +858,8 @@ def parallel_propagate_ns(os, rg, dp, r, np=None):
     r_list.append((os, rg, dp, r[: nr / cpus]))
     for i in range(2, cpus):
         # os,rg,dp,rb=x
-        r_list.append((os, rg, dp, r[(nr / cpus) * (i - 1):(nr / cpus) * (i)]))
-    r_list.append((os, rg, dp, r[(nr / cpus) * (cpus - 1):]))
+        r_list.append((os, rg, dp, r[(nr / cpus) * (i - 1) : (nr / cpus) * (i)]))
+    r_list.append((os, rg, dp, r[(nr / cpus) * (cpus - 1) :]))
     osi = pool.map(aux_paral_f_ns, r_list)
 
     pool.close()
