@@ -175,13 +175,13 @@ cdef class System(Picklable):
 
     # Return an iterator so this can be used similar to a list
     def __iter__(self):
-        return self._complist.itervalues()
+        return iter(self._complist.values())
 
     def iteritems(self):
-        return self._complist.iteritems()
+        return iter(self._complist.items())
 
     def iter(self):
-        return self._complist.iter()
+        return iter(self._complist.values())
 
     def clear(self):
         return self._complist.clear()
@@ -190,10 +190,10 @@ cdef class System(Picklable):
         return self._complist.items()
 
     def iterkeys(self):
-        return self._complist.iterkeys()
+        return iter(self._complist.keys())
 
     def itervalues(self):
-        return self._complist.itervalues()
+        return iter(self._complist.values())
 
     def keys(self):
         return self._complist.keys()
@@ -214,13 +214,13 @@ cdef class System(Picklable):
         return self._complist.values()
 
     def viewitems(self):
-        return self._complist.viewitems()
+        return self._complist.items()
 
     def viewkeys(self):
-        return self._complist.viewkeys()
+        return self._complist.keys()
 
     def viewvalues(self):
-        return self._complist.viewvalues()
+        return self._complist.values()
 
     def clear_ray_list(self):
         """ Clear the ray lists of the system
@@ -242,11 +242,11 @@ cdef class System(Picklable):
                 if isinstance(i, Ray):
                     self._np_rays.append(i)
                 else:
-                    raise Exception, "Not a valid Ray"
+                    raise TypeError("Not a valid Ray")
         elif isinstance(ray, Ray):
             self._np_rays.append(ray)
         else:
-            raise Exception, "Not a valid Ray"
+            raise TypeError("Not a valid Ray")
 
     def propagate(self, update_ids=True):
         """ Propagates all the rays in the non propagated list.
@@ -292,9 +292,9 @@ cdef class System(Picklable):
             try:
                 O=O[k][0]
             except KeyError:
-                raise KeyError, "Invalid path.  Key %s does not exist" %k
+                raise KeyError(f"Invalid path. Key {k} does not exist")
             except TypeError:
-                raise TypeError, "Invalid path. Path too long, key %s does not exist" %k
+                raise TypeError(f"Invalid path. Path too long, key {k} does not exist")
         assert isinstance(O, Surface), "Error in path: Path too short"
 
         return O
@@ -309,9 +309,9 @@ cdef class System(Picklable):
                 C=O
                 O=O[k][0]
             except KeyError:
-                raise KeyError, "Invalid path.  Key %s does not exist" %k
+                raise KeyError(f"Invalid path. Key {k} does not exist")
             except TypeError:
-                raise TypeError, "Invalid path. Path too long, key %s does not exist" %k
+                raise TypeError(f"Invalid path. Path too long, key {k} does not exist")
         assert isinstance(C, Component), "Error in path: Path too short"
         return C
 
@@ -521,9 +521,11 @@ cdef class System(Picklable):
 
             # TODO: Need to find a solution when the two surfaces return more
             # than one ray.
-            if (len(ri_n0)>1)and(len(ri_n1)>1):
-                raise Exception, "The two surfaces in contact, can not produce "\
-                                 "both more than one propagated ray"
+            if (len(ri_n0) > 1) and (len(ri_n1) > 1):
+                raise RuntimeError(
+                    "The two surfaces in contact cannot produce both "
+                    "more than one propagated ray"
+                )
             elif len(ri_n0)>1:
                 for i in ri_n0:
                     ri_=i.ch_coord_sys_inv(PSR0, DSR0)
@@ -559,8 +561,9 @@ cdef class System(Picklable):
                     self._exit_status_flag = 1
 
             else:
-                raise Exception, \
-                    "Error, a a ray can not be parent and child at the same time"
+                raise RuntimeError(
+                    "Error, a ray cannot be parent and child at the same time"
+                )
 
         return ri
 

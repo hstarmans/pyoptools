@@ -729,8 +729,9 @@ cdef class Surface(Picklable):
 
         if ni<0 or nr<0:
             # This case should never happen
-            raise ValueError, \
+            raise ValueError(
                 f"Negative refractive index detected. ni={ni} nr={nr}"
+            )
 
         elif (reflect == 0) and not(isnan(S2(0)) or isnan(S2(1)) or isnan(S2(2))):
             # Normal refraction case

@@ -117,13 +117,13 @@ cdef class Component(Picklable):
 
     # Return an iterator so this can be used similar to a list
     def __iter__(self):
-        return self._surflist.itervalues()
+        return iter(self._surflist.values())
 
     def iteritems(self):
-        return self._surflist.iteritems()
+        return iter(self._surflist.items())
 
     def iter(self):
-        return self._surflist.iter()
+        return iter(self._surflist.values())
 
     def clear(self):
         return self._surflist.clear()
@@ -132,10 +132,10 @@ cdef class Component(Picklable):
         return self._surflist.items()
 
     def iterkeys(self):
-        return self._surflist.iterkeys()
+        return iter(self._surflist.keys())
 
     def itervalues(self):
-        return self._surflist.itervalues()
+        return iter(self._surflist.values())
 
     def keys(self):
         return self._surflist.keys()
@@ -156,13 +156,13 @@ cdef class Component(Picklable):
         return self._surflist.values()
 
     def viewitems(self):
-        return self._surflist.viewitems()
+        return self._surflist.items()
 
     def viewkeys(self):
-        return self._surflist.viewkeys()
+        return self._surflist.keys()
 
     def viewvalues(self):
-        return self._surflist.viewvalues()
+        return self._surflist.values()
 
     def get_surf_paths(self):
         """
