@@ -4,7 +4,7 @@ from pyoptools.misc.picklable.picklable cimport Picklable
 from pyoptools.raytrace.mat_lib import Material
 from pyoptools.raytrace.ray.ray cimport Ray
 from pyoptools.raytrace.surface.surface cimport Surface
-from numpy import asarray
+from libc.math cimport INFINITY
 
 __all__ = ["Component"]
 
@@ -218,12 +218,11 @@ cdef class Component(Picklable):
         """
 
         cdef tuple[double, double, double] P, D
-        cdef list dist_list = []
-        cdef list pi_list = []
-        cdef list surf_list = []
-
+        cdef double min_d = INFINITY
+        cdef double d
+        cdef object min_pi = None
+        cdef Surface min_surf = None
         cdef Surface S
-        cdef int mini
         cdef Ray R
 
         for surf in self.surflist:
@@ -234,14 +233,14 @@ cdef class Component(Picklable):
             R = ri_.ch_coord_sys(P, D)
 
             Dist = S.distance(R)
+            d = Dist[0]
 
-            dist_list.append(Dist[0])
-            pi_list.append(Dist[1])
-            surf_list.append(S)  # (Dist[2])
+            if d < min_d or min_surf is None:
+                min_d = d
+                min_pi = Dist[1]
+                min_surf = S
 
-        mini = asarray(dist_list).argmin()
-
-        return dist_list[mini], pi_list[mini], surf_list[mini]
+        return min_d, min_pi, min_surf
 
     def reset(self):
         """Reset the optical component
@@ -277,27 +276,28 @@ cdef class Component(Picklable):
             n = n_m
             n_p = my_n
 
-        dist_list = [0]
+        # Search for the next surface to be hit
+        cdef double min_d = INFINITY
+        cdef double d
+        cdef object min_surf_item = None
+        cdef Surface S
+        cdef Ray R
 
-        # Search for the next surface to be hitted
-        dist_list = []
-        surf_list = []
         for i in self.surflist:
             S, P, D = i
-            surf_list.append(i)
             # Change the coordinate system of the ray, From the Component
             # coordinate system to the surface component system, and calculate
             # the distance to the next surface.
 
             R = ri.ch_coord_sys(P, D)
-            Dist = S.distance(R)[0]
-            dist_list.append(Dist)
+            d = S.distance(R)[0]
+            if d < min_d or min_surf_item is None:
+                min_d = d
+                min_surf_item = i
 
         # Find the closest surface, and change the ray to its coordinate system
         # and calculate the refraction
-        j = asarray(dist_list).argmin()
-
-        SR, PSR, DSR = surf_list[j]
+        SR, PSR, DSR = min_surf_item
         R = ri.ch_coord_sys(PSR, DSR)
         ri_n = SR.propagate(R, n, n_p)
 

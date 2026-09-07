@@ -15,7 +15,6 @@
 """Module that defines the optical system class System()
 """
 
-from numpy import asarray, array, all, isinf as npisinf
 
 from pyoptools.raytrace.ray.ray cimport Ray
 
@@ -381,63 +380,59 @@ cdef class System(Picklable):
         cdef tuple[double, double, double] P, D, PSR, DSR, PSR0, DSR0, PSR1, \
             DSR1
 
-        cdef int j, j1
-        cdef double d0, d1
+        cdef double d0 = INFINITY
+        cdef double d1 = INFINITY
+        cdef object comp0 = None, comp1 = None
+        cdef object surf0 = None, surf1 = None
+        cdef object pi0 = None, pi1 = None
+        cdef double d
+        cdef object C
+        cdef Ray R
 
         if isnan(ri.n):
             ri.n=self.n
 
-        cdef list dist_list=[]
-        cdef list surf_list=[]
-        cdef list comp_list=[]
-        cdef list pi_list=[]
-        # Calculate the path length followed by the ray until it intersects all
-        # the components and subsystems
-
-        # Note: C can be component or subsystem, so for the moment we will
-        # leave it as a python object
-
-        cdef object C
-        for i in self.complist:
-            C, P, D = i
-            comp_list.append((C, P, D))
+        # Calculate the path length followed by the ray until it intersects
+        # the components and subsystems, tracking the two nearest components.
+        for comp_item in self.complist:
+            C, P, D = comp_item
             # Reorientar el rayo, al sistema de coordenadas del elemento
             # y calcular el recorrido del rayo hasta chocar con la
             # el elemento
-            R=ri.ch_coord_sys(P, D)
+            R = ri.ch_coord_sys(P, D)
 
-            Dist=C.distance(R)
+            Dist = C.distance(R)
+            d = Dist[0]
 
-            dist_list.append(Dist[0])
+            if d < d0 or comp0 is None:
+                # Shift current best to second best
+                d1 = d0
+                comp1 = comp0
+                surf1 = surf0
+                pi1 = pi0
 
-            pi_list.append(Dist[1])
-
-            surf_list.append(Dist[2])
+                d0 = d
+                comp0 = comp_item
+                surf0 = Dist[2]
+                pi0 = Dist[1]
+            elif d < d1 or comp1 is None:
+                d1 = d
+                comp1 = comp_item
+                surf1 = Dist[2]
+                pi1 = Dist[1]
 
         # Check if there are more components in front of the ray
         # if not, return the original ray
-
-        if all(npisinf(array(dist_list))):
+        if isinf(d0):
             return ri
 
-        # Sort the components by distance
-        sort_list=asarray(dist_list).argsort()
-
-        # Take the 2 nearest components. If there is only one component assume the 2nd
-        # component at infinitum
-        j=sort_list[0]
-        d0=dist_list[j]
-
         # Add ray to the hit list
-        surf_list[j]._hit_list.append((pi_list[j], ri))
+        surf0._hit_list.append((pi0, ri))
 
         # TODO: The hitlists of the surfaces inside a subsystem are not accurate
         # because the rays are in the subsystem coordinate system, and not in
         # world coordinate system.
-        if len(sort_list)>1:
-            j1=sort_list[1]
-            d1=dist_list[j1]
-        else:
+        if comp1 is None:
             d1 = INFINITY
         # Si las compomentes mas cercanas no estan en contacto, calcular la
         # propagacion a travez de la componente mas cercana
@@ -456,10 +451,10 @@ cdef class System(Picklable):
         # leave it as a standard python object
         cdef object SR
 
-        if isinstance(comp_list[j][0], System):
+        if isinstance(comp0[0], System):
             # Leer el elemento que primero intersecta el rayo, asi como
             # su posicion y orientacion
-            SR, PSR, DSR=comp_list[j]
+            SR, PSR, DSR=comp0
             # SR.reset()
             SR.clear_ray_list()
 
@@ -480,7 +475,7 @@ cdef class System(Picklable):
 
             # Get the nearest element to the ray origin, as well as its
             # position and orientation
-            SR, PSR, DSR=comp_list[j]
+            SR, PSR, DSR=comp0
 
             # Change the ray to the coordinate system of the element
 
@@ -502,11 +497,11 @@ cdef class System(Picklable):
             # There are 2 objects in contactt
             # Object 1
 
-            SR0, PSR0, DSR0=comp_list[j]
+            SR0, PSR0, DSR0=comp0
             # Object 2
-            SR1, PSR1, DSR1=comp_list[j1]
+            SR1, PSR1, DSR1=comp1
             # Add ray to the hit list
-            surf_list[j1]._hit_list.append((pi_list[j1], ri))
+            surf1._hit_list.append((pi1, ri))
             n0=SR0.n(ri.wavelength)
             n1=SR1.n(ri.wavelength)
             # print 1
@@ -677,28 +672,29 @@ cdef class System(Picklable):
             that is closest to the ray (distance,point of intersection, surface)
         """
         # cdef np.ndarray P,D
-        cdef list dist_list=[]
-        cdef list pi_list=[]
-        cdef list surf_list=[]
-        # print self.complist
+        cdef double min_d = INFINITY
+        cdef double d
+        cdef object min_pi = None
+        cdef object min_surf = None
+        cdef object C
+        cdef Ray R
+
         for comp in self.complist:
-            C, P, D =comp
-            # C,P,D = i
+            C, P, D = comp
             # Reorientar el rayo, al sistema de coordenadas del elemento
             # y calcular el recorrido del rayo hasta chocar con la
             # el elemento
-            R=ri.ch_coord_sys(P, D)
+            R = ri.ch_coord_sys(P, D)
 
-            Dist=C.distance(R)
+            Dist = C.distance(R)
+            d = Dist[0]
 
-            dist_list.append(Dist[0])
+            if d < min_d or min_surf is None:
+                min_d = d
+                min_pi = Dist[1]
+                min_surf = Dist[2]
 
-            pi_list.append(Dist[1])
-            surf_list.append(Dist[2])
-
-        mini=asarray(dist_list).argmin()
-
-        return dist_list[mini], pi_list[mini], surf_list[mini]
+        return min_d, min_pi, min_surf
 
     def merge(self, os):
         """

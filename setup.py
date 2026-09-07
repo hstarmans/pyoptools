@@ -1,10 +1,10 @@
-import sys
 import os
 import subprocess
-import platform
-from setuptools import setup, Command
+import sys
+
 from Cython.Build import cythonize
 from Cython.Build.Dependencies import default_create_extension
+from setuptools import Command, setup
 
 
 def get_eigen_include_path():
@@ -82,5 +82,4 @@ if __name__ == "__main__":
         use_scm_version=True,
         include_package_data=True,
         cmdclass={"test": TestCommand},
-        setup_requires=["setuptools_scm", "Cython", "eigency"]
     )
