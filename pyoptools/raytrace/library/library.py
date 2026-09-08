@@ -47,6 +47,8 @@ class LibraryModule:
         self.dp = files("pyoptools.raytrace.library").joinpath("catalogs")
 
     def __getattr__(self, name: str):
+        if name.startswith("_"):
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
         p = self.dp / (name + ".json")
         if p.exists():
             return OpticCatalog(p)

@@ -279,6 +279,8 @@ class MaterialLibrary:
         raise KeyError(warning)
 
     def __getattr__(self, name: str):
+        if name.startswith("_"):
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
         # Guard for if instantiated as a sub-module
         if self.prefix is not None:
             raise AttributeError()
@@ -388,4 +390,10 @@ class CompoundLibrary:
         return results
 
 
-sys.modules[__name__] = MaterialLibrary()
+_mat_lib_instance = MaterialLibrary()
+_mat_lib_instance.__name__ = __name__
+_mat_lib_instance.__doc__ = __doc__
+_mat_lib_instance.__file__ = __file__
+_mat_lib_instance.__package__ = __package__
+
+sys.modules[__name__] = _mat_lib_instance
