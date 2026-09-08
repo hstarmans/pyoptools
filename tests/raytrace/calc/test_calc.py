@@ -123,7 +123,6 @@ def test_pupil_location():
     assert False
 
 
-@pytest.mark.skip(reason="This is failing")
 def test_paraxial_location():
     lens1 = library.Edmund["45179"]  # f=200 r= 25
     optical_axis = Ray(origin=(0, 0, -10000), direction=(0, 0, 1), wavelength=0.55)
@@ -150,7 +149,6 @@ def test_paraxial_location():
     assert not real_
 
 
-@pytest.mark.skip(reason="Test for find_aperture is pending.")
 def test_find_aperture():
     for p in permutations([11, 13, 17, 19]):
         ccd_size = (p[0], p[1])
@@ -163,7 +161,6 @@ def test_find_aperture():
         assert result.shape == aperture_size
 
 
-@pytest.mark.skip(reason="find_ppp seems to be failing")
 def test_find_ppp():
     lens1 = library.Edmund["45179"]  # f=200 r= 25
     optical_axis = Ray(origin=(0, 0, -10), direction=(0, 0, 1), wavelength=0.55)

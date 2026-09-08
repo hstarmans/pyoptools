@@ -233,7 +233,7 @@ def chief_ray_search(
     try:
         x, y, z = ccds.hit_list[0][0]
         dist = sqrt(square(x) + square(y))
-    except ValueError:
+    except (ValueError, IndexError):
         dist = inf
 
     p_dist = dist
@@ -252,7 +252,7 @@ def chief_ray_search(
         try:
             x, y, z = ccds.hit_list[0][0]
             dist = sqrt(square(x) + square(y))
-        except ValueError:
+        except (ValueError, IndexError):
             dist = inf
 
         if p_dist > dist:
@@ -497,10 +497,9 @@ def find_aperture(ccd, size=(50, 50)):
     hl = ccd.hit_list
     sx, sy = ccd.size
     tx, ty = size
-    dx, dy = sx / (tx - 1), sy / (ty - 1)
     CG = mgrid[
-        float(-sx / 2.0) : float(sx / 2.0 + dx) : float(dx),
-        float(-sy / 2.0) : float(sy / 2.0 + dy) : float(dy),
+        float(-sx / 2.0) : float(sx / 2.0) : complex(0, tx),
+        float(-sy / 2.0) : float(sy / 2.0) : complex(0, ty),
     ]
 
     rm = sqrt(CG[0] ** 2 + CG[1] ** 2)
