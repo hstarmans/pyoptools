@@ -104,3 +104,27 @@ def test_doveprism():
     r_top = Ray(origin=(0, 20, 0), direction=(0, -1, 0))
     res_top = dove.propagate(r_top, 1.0)
     assert len(res_top) > 0
+
+
+def test_component_hit_list():
+    """Verify that Component.hit_list aggregates surface hits in component coordinates."""
+    import numpy as np
+
+    from pyoptools.raytrace.comp_lib import SphericalLens
+    from pyoptools.raytrace.ray import Ray
+    from pyoptools.raytrace.system import System
+
+    lens = SphericalLens(
+        radius=25.0, thickness=5.0, curvature_s1=1.0 / 50.0, curvature_s2=-1.0 / 50.0
+    )
+    s = System(complist=[(lens, (0, 0, 30), (0, 0, 0))])
+    r = Ray(origin=(0, 0, 0), direction=(0, 0, 1))
+    s.propagate_ray(r)
+
+    hl = lens.hit_list
+    assert len(hl) == 2, f"Expected 2 hits (front & back surface), got {len(hl)}"
+    p0, r0 = hl[0]
+    p1, r1 = hl[1]
+    # In component coordinates, front surface vertex is at z = -2.5, rear at z = +2.5
+    np.testing.assert_allclose(p0, [0.0, 0.0, -2.5], atol=1e-5)
+    np.testing.assert_allclose(p1, [0.0, 0.0, 2.5], atol=1e-5)

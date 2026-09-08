@@ -1,9 +1,16 @@
+# distutils: language = c++
 from pyoptools.misc.plist.plist cimport plist
-# from pyoptools.misc.cmisc.cmisc cimport *
 from pyoptools.misc.picklable.picklable cimport Picklable
 from pyoptools.raytrace.mat_lib import Material
 from pyoptools.raytrace.ray.ray cimport Ray
 from pyoptools.raytrace.surface.surface cimport Surface
+from pyoptools.misc.cmisc.eigen cimport (
+    Vector3d,
+    Matrix3d,
+    compute_rotation_matrix,
+    assign_to_vector3d,
+    convert_vector3d_to_tuple,
+)
 from libc.math cimport INFINITY
 
 __all__ = ["Component"]
@@ -54,21 +61,31 @@ cdef class Component(Picklable):
                 "material must be a floating point number or a Material instance"
             self._material = material
 
-    # TODO: FIX THIS HITLIST TO WORK WITH EIGEN
-    # property hit_list:
-    #    def __get__(self):
-    #        ret_list = []
-    #        for i in self.surflist:
-    #            S, SC, SR = i
-    #            HL = S.hit_list
-    #            for j in HL:
-    #                PI, R = j
-    #                # Calculate the intersection point in the Component coordinate
-    #                # System
-    #                tm = rot_mat(SR)
-    #                PI_C = dot(tm, PI)+SC
-    #                ret_list.append((PI_C, R))
-    #        return tuple(ret_list)
+    property hit_list:
+        """Return a tuple of (hit_point, incident_ray) for all hits on the component's
+        surfaces, transformed to the Component's coordinate system.
+        """
+        def __get__(self):
+            cdef list ret_list = []
+            cdef Matrix3d tm
+            cdef Vector3d sr_vec, sc_vec, pi_vec, pi_c
+            cdef Surface S
+            cdef tuple SC, SR
+
+            for surf in self.surflist:
+                S, SC, SR = surf
+                HL = S.hit_list
+                if not HL:
+                    continue
+                assign_to_vector3d(SR, sr_vec)
+                compute_rotation_matrix(sr_vec, tm)
+                assign_to_vector3d(SC, sc_vec)
+                for item in HL:
+                    PI, R = item
+                    assign_to_vector3d(PI, pi_vec)
+                    pi_c = tm * pi_vec + sc_vec
+                    ret_list.append((convert_vector3d_to_tuple(pi_c), R))
+            return tuple(ret_list)
 
     def __init__(self, surflist=None, material=1.):
 
