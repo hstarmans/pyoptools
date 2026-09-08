@@ -189,7 +189,6 @@ class AsphericImporter(OpticImporter):
         return checktype(self.surflist, "EVENASPH")
 
     def definition(self):
-        # print('Importing aspheric')
 
         self.lens_data["type"] = "AsphericLens"
         self.lens_data["thickness"] = None
@@ -629,12 +628,7 @@ class ZmfImporter:
 
         # Flag
         if any(ex in description for ex in self.manual_exclusions):
-            # print(f"\n *** \n Manually excluded : {key}")
-            # print(libdata[key])
-            # print('\n')
             # for s in surflist:
-            #    print(s)
-            # print('\n *** \n')
             return FailedImport.manual_exclusion
 
         # Delete the object plane and the image plane

@@ -269,7 +269,6 @@ def chief_ray_search(
         # limit the minimum value of w
         if w < 0.0000001:
             w = 0.0000001
-    # print p_dist,ntry
     return retray
 
 
@@ -644,7 +643,6 @@ def get_optical_path_ep(opsys, opaxis, raylist, stop=None, r=None):
     opsys.reset()
 
     # Propagate the rays
-    # print "***", raylist
     opsys.ray_add(raylist)
     opsys.propagate()
     # pf=PlotFrame(opsys=opsys)
@@ -674,7 +672,6 @@ def get_optical_path_ep(opsys, opaxis, raylist, stop=None, r=None):
                 (ccds, (0, 0, 0), (0, 0, 0)),
             ]
         )
-    # print rl
 
     dummy = System(
         complist=[
@@ -690,7 +687,6 @@ def get_optical_path_ep(opsys, opaxis, raylist, stop=None, r=None):
     hcl = []
     opl = []
     for ip, r in ccd.hit_list:
-        # print ip
         x, y, z = ip
         # TODO: This should not be done using the label
         d = float(r.label) - r.optical_path()
@@ -702,8 +698,6 @@ def get_optical_path_ep(opsys, opaxis, raylist, stop=None, r=None):
     # data=bisplev(array(range(-20,20)),array(range(-20,20)),rv)
 
     # data=(data-data.mean())
-
-    # print "Gaussian reference sphere radius =",sqrt(dot(impos-exp,impos-exp))
 
 
 def find_reference_sphere_radius(ip, pl):
@@ -747,9 +741,7 @@ def find_reference_sphere_radius(ip, pl):
     def F(z):
         dist = pla - (sqrt(ipa[:, 0] ** 2 + ipa[:, 1] ** 2 + (ipa[:, 2] - z) ** 2) - z)
         u = sqrt((dist**2).sum())
-        # print "*", u
         # u=dist[-1]
-        # print u
         return u
 
     r = fsolve(F, -10.0)

@@ -200,8 +200,6 @@ def from_yml(file_path):
     """
     # with open(filename, encoding='utf-8') as f:
 
-    # print('opening ', file_path)
-
     with file_path.open(encoding="utf-8") as f:
         mat = yaml.load(f, Loader=yaml.FullLoader)
 

@@ -16,7 +16,6 @@ cdef class Picklable:
         '''
         Method needed to be able to pickle a surface.
         '''
-        # print "in SYSTEM reduce creating a ", type(self)," class"
         return(type(self), (), self.__getstate__())
 
     def __getstate__(self):

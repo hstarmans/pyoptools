@@ -89,23 +89,6 @@ class RightAnglePrism(Component):
         self.surflist["S4"] = (__e1, (0, self.height / 2, 0), (pi / 2, -pi / 2, 0))
         self.surflist["S5"] = (__e2, (0, -self.height / 2, 0), (pi / 2, -pi / 2, 0))
 
-    # ~ def __reduce__(self):
-    # ~ args=() #self.intensity,self.wavelength,self.n ,self.label,self.parent,self.pop,self.orig_surf)
-    # ~ return(type(self),args,self.__getstate__())
-    # ~
-    # ~
-    # ~ #TODO: Check if there is a better way to do this, because we are
-    # ~ #rewriting the constructor values here
-    # ~
-    # ~ def __getstate__(self):
-    # ~ return self.width, self.height, self.reflectivity, self.__a_face, \
-    # ~ self.__b_face, self.__h_face, self.__e1, self.__e2,\
-    # ~ self.surflist
-    # ~
-    # ~ def __setstate__(self,state):
-    # ~ self.width, self.height, self.reflectivity, self.__a_face, \
-    # ~ self.__b_face, self.__h_face, self.__e1, self.__e2, self.surflist=state
-
 
 class PentaPrism(Component):
     """Class to define a pentaprism

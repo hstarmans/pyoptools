@@ -189,8 +189,6 @@ def gs_mod(idata, itera=10, osize=256):
     mask = exp(2.0j * pi * random(idata.shape))
     mask[zone] = 0
 
-    # ~ imshow(abs(mask)),colorbar()
-
     fdata = fftshift(
         fft2(ifftshift(idata + mask))
     )  # Nota, colocar esta mascara es muy importante, por que si no  no converge tan rapido
@@ -199,10 +197,6 @@ def gs_mod(idata, itera=10, osize=256):
         fdata = exp(1.0j * angle(fdata))
 
         rdata = ifftshift(ifft2(fftshift(fdata)))
-        # ~ e= (abs(rdata[zone])-idata[zone]).std()
-        # ~ if e>ea:
-        # ~
-        # ~ break
         rdata[zone] = exp(1.0j * angle(rdata[zone])) * (idata[zone])
         fdata = fftshift(fft2(ifftshift(rdata)))
     fdata = exp(1.0j * angle(fdata))
@@ -267,11 +261,9 @@ def gs_gpu(idata, itera=100):
 
     fdata = fdata_gpu.get()
 
-    # ~ prg.norm(queue, fdata_gpu.shape, None,fdata_gpu.data)
     fdata = ifftshift(fdata)
     fdata = exp(1.0j * angle(fdata))
 
-    # ~ fdata=fdata_gpu.get()
     return fdata
 
 
@@ -315,7 +307,6 @@ def gs_mod_gpu(idata, itera=10, osize=256):
     for i in range(itera):
         prg.norm(queue, fdata_gpu.shape, None, fdata_gpu.data)
         plan.execute(fdata_gpu.data, rdata_gpu.data, inverse=True)
-        # ~ prg.norm1(queue, rdata_gpu.shape,None,rdata_gpu.data,idata_gpu.data,error_gpu.data, int32(cut))
         norm1 = prg.norm1
         norm1.set_scalar_arg_dtypes([None, None, None, int32])
         norm1(
@@ -330,10 +321,6 @@ def gs_mod_gpu(idata, itera=10, osize=256):
 
         # e = sqrt(cl_array.sum(error_gpu).get()) / (2 * cut)
 
-        # ~ if e>ea:
-        # ~
-        # ~ break
-        # ~ ea=e
         plan.execute(rdata_gpu.data, fdata_gpu.data)
 
     fdata = fdata_gpu.get()

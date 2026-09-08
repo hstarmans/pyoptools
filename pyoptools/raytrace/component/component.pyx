@@ -89,8 +89,7 @@ cdef class Component(Picklable):
 
     def __init__(self, surflist=None, material=1.):
 
-        # Colocar una lista vacia en el __init__ no funciona, por que las cosas
-        # se duplican. Toca reportar un bug a python.
+        # surflist defaults to None to avoid mutable default argument issues.
 
         if surflist is None:
             self.surflist = []
@@ -206,7 +205,6 @@ cdef class Component(Picklable):
         if isinstance(self.material, Material):
             return self.material.n(wavelength)
 
-        # print self.material
         return self.material
 
     def surf_changed(self):

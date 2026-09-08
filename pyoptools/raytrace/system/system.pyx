@@ -396,9 +396,8 @@ cdef class System(Picklable):
         # the components and subsystems, tracking the two nearest components.
         for comp_item in self.complist:
             C, P, D = comp_item
-            # Reorientar el rayo, al sistema de coordenadas del elemento
-            # y calcular el recorrido del rayo hasta chocar con la
-            # el elemento
+            # Reorient ray to the element coordinate system and compute
+            # distance to intersection
             R = ri.ch_coord_sys(P, D)
 
             Dist = C.distance(R)
@@ -434,11 +433,8 @@ cdef class System(Picklable):
         # world coordinate system.
         if comp1 is None:
             d1 = INFINITY
-        # Si las compomentes mas cercanas no estan en contacto, calcular la
-        # propagacion a travez de la componente mas cercana
-        # Nota_: La comparacion de punto flotante no esta funcionando. Para
-        # que funcione toca definir un epsilon, en el que se consideran
-        # nulas las diferencias
+        # If the closest components are not in contact within numerical tolerance,
+        # propagate through the closest component
 
         # If the closest components are not in contact calculate the propagation
         # using the closest surface.
@@ -452,8 +448,7 @@ cdef class System(Picklable):
         cdef object SR
 
         if isinstance(comp0[0], System):
-            # Leer el elemento que primero intersecta el rayo, asi como
-            # su posicion y orientacion
+            # Read the first intersected subsystem, position, and orientation
             SR, PSR, DSR=comp0
             # SR.reset()
             SR.clear_ray_list()
@@ -470,7 +465,7 @@ cdef class System(Picklable):
             for i in RT.childs:
                 ri.add_child(i)
 
-        # Verificar si no hay componentes en contacto
+        # Check if components are not in contact
         elif abs(d0-d1)>N_EPS:
 
             # Get the nearest element to the ray origin, as well as its
@@ -494,17 +489,16 @@ cdef class System(Picklable):
                 ri.add_child(ri_)
         else:
 
-            # There are 2 objects in contactt
-            # Object 1
+            # Two components in contact:
+            # Component 1
 
             SR0, PSR0, DSR0=comp0
-            # Object 2
+            # Component 2
             SR1, PSR1, DSR1=comp1
             # Add ray to the hit list
             surf1._hit_list.append((pi1, ri))
             n0=SR0.n(ri.wavelength)
             n1=SR1.n(ri.wavelength)
-            # print 1
             # Calculate the refraction for both components
 
             R0=ri.ch_coord_sys(PSR0, DSR0)
@@ -599,7 +593,6 @@ cdef class System(Picklable):
             assert ri.wavelength==gr.wavelength, \
                 "Propagated rays, and guide ray wavelength must match"
             # self.propagate_ray(ri)
-            # ~ # Check if the ray comes from the media
             if isnan(ri.n):
                 ri.n=self.n
 
@@ -681,9 +674,8 @@ cdef class System(Picklable):
 
         for comp in self.complist:
             C, P, D = comp
-            # Reorientar el rayo, al sistema de coordenadas del elemento
-            # y calcular el recorrido del rayo hasta chocar con la
-            # el elemento
+            # Reorient ray to the element coordinate system and compute
+            # distance to intersection
             R = ri.ch_coord_sys(P, D)
 
             Dist = C.distance(R)

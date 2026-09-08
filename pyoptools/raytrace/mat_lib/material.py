@@ -262,10 +262,8 @@ class MaterialLibrary:
                 try:
                     return MaterialLibrary(prefix=libname)[name]
                 except AttributeError:
-                    # print('No library')
                     pass
                 except KeyError:
-                    # print('Not in library')
                     pass
 
         warning = f"Material {name} not found in any of {libs.split()}."

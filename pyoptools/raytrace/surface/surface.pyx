@@ -1108,7 +1108,6 @@ cdef class Surface(Picklable):
 
         Xa = linspace(xmin-dx, xmax+dx, int(rsamples[0]*1.2))
         Ya = linspace(ymin-dy, ymax+dy, int(rsamples[1]*1.2))
-        # print Xa,Ya
         Xa, Ya = meshgrid(Xa, Ya)
 
         #
@@ -1134,7 +1133,6 @@ cdef class Surface(Picklable):
             if any(npisinf(self.intersection(ri))):
                 continue
 
-            # print self.intersection(ri)
             rd = self.propagate(ri, ni, nr)
 
             # take only the transmitted ray
@@ -1149,7 +1147,6 @@ cdef class Surface(Picklable):
 
             # Calculate optical path
             d = di*ni+dr*nr
-            # print d,di,dr,PI
             if d != inf:
                 x, y, z = PI
                 xi.append(x)
@@ -1233,10 +1230,6 @@ cdef class Surface(Picklable):
         return d
 
     def __repr__(self):
-        # ~ '''Return an string with the representation of the optical surface
-        # ~
-        # ~ It must be overloaded in all subclasses
-        # ~ '''
 
         return "OptSurf(reflectivity="+str(self.reflectivity)+")"
 
@@ -1275,7 +1268,6 @@ cdef class Surface(Picklable):
 
         '''
         xm = self.shape.limits()[1]
-        # print xm
         # Get the z position of the border of the surface
 
         if zb is None:

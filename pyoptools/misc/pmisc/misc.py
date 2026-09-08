@@ -49,68 +49,7 @@ def rot_z(tz):
     ).astype(float64)
 
 
-# ~ def rot_mat(r):
-# ~ '''Returns the transformation matrix for a rotation around the Z,Y,X axes
-# ~
-# ~ The rotation is made first around the Z axis, then around the Y axis, and
-# ~ finally around the X axis.
-# ~
-# ~ Parameters
-# ~
-# ~ r= (rx,ry,rz)
-# ~ '''
-# ~
-# ~ c=cos(r)
-# ~ s=sin(r)
-# ~
-# ~ rx=array([[1. , 0., 0.],
-# ~ [0. , c[0],-s[0]],
-# ~ [0. , s[0], c[0]]])
-# ~
-# ~ ry=array([[ c[1], 0., s[1]],
-# ~ [ 0., 1., 0.],
-# ~ [-s[1], 0., c[1]]])
-# ~
-# ~
-# ~ rz=array([[ c[2],-s[2], 0.],
-# ~ [ s[2], c[2], 0.],
-# ~ [ 0., 0., 1.]])
-# ~
-# ~
-# ~ tm=dot(rz,dot(ry,rx))
-# ~
-# ~ return tm
-
 #  To improve speed, this routine was moved to cmisc.pyx
-# ~ def rot_mat_i(r):
-# ~ '''Returns the inverse transformation matrix for a rotation around the Z,Y,X axes
-# ~
-# ~ Parameters
-# ~
-# ~ r= (rx,ry,rz)
-# ~ '''
-# ~
-# ~ c=cos(r)
-# ~ s=sin(r)
-# ~
-# ~ rx=array([[ 1., 0., 0.],
-# ~ [ 0., c[0], s[0]],
-# ~ [ 0.,-s[0], c[0]]])
-# ~
-# ~ ry=array([[ c[1], 0.,-s[1]],
-# ~ [ 0., 1., 0.],
-# ~ [ s[1], 0., c[1]]])
-# ~
-# ~
-# ~ rz=array([[ c[2], s[2], 0.],
-# ~ [-s[2], c[2], 0.],
-# ~ [ 0., 0., 1.]])
-# ~
-# ~ # Nota: se hizo una prueba para optimizar escribirndo la expresión del producto
-# ~ # escalar, y el resultado fue considerablemente mas lento, toca revisar
-# ~
-# ~
-# ~ return dot(rx,dot(ry,rz))
 
 
 def cross(a, b):
@@ -224,7 +163,6 @@ def matrix_interpolation(M, i, j, type="bilinear"):
         return dot(iv, dot(m, jv))[0]
         # dx=i-i_s
         # dy=j-j_s
-        # print i, j, i_s, j_s,  dx, dy
         # p1=dx*dy*M[i_s, j_s]
         # p2=(1.-dx)*dy*M[i_s+1, j_s]
         # p3=dx*(1.-dy)*M[i_s, j_s+1]
@@ -305,7 +243,6 @@ def hitlist2int(x, y, z, xi, yi):
 
     #    #print tri.circumcenters[:, 0]
     #    #print tri.circumcenters.shape
-    #    print ntriangles,  tri.circumcenters[:, 0].shape,  tri.circumcenters[:, 0].flatten().shape
 
     # itri=delaunay.Triangulation(xc,yc)
     # inti=itri.linear_interpolator(I)
@@ -395,7 +332,6 @@ def hitlist2int_list(x, y):
 
     #    #print tri.circumcenters[:, 0]
     #    #print tri.circumcenters.shape
-    #    print ntriangles,  tri.circumcenters[:, 0].shape,  tri.circumcenters[:, 0].flatten().shape
 
     # itri=delaunay.Triangulation(xc,yc)
     # inti=itri.linear_interpolator(I)
@@ -561,9 +497,6 @@ def interpolate_g(xi, yi, zi, xx, yy, knots=10, error=False, mask=None):
     yi = array(yi)
     zi = array(zi)
 
-    # print xi
-    # print yi
-    # print zi
     assert xi.ndim == 1, "xi must ba a 1D array or list"
     assert yi.ndim == 1, "yi must ba a 1D array or list"
     assert zi.ndim == 1, "zi must ba a 1D array or list"
@@ -604,7 +537,6 @@ def interpolate_g(xi, yi, zi, xx, yy, knots=10, error=False, mask=None):
     # LSQBivariateSpline using some knots gives smaller error than
     # SmoothBivariateSpline
     di = interpolate.LSQBivariateSpline(xsp, ysp, zsp, xk[1:-1], yk[1:-1])
-    # print xsp,ysp,zsp
     # di=interpolate.SmoothBivariateSpline(xsp, ysp, zsp)
 
     # Evaluate error
